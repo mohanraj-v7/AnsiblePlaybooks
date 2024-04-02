@@ -1,0 +1,10 @@
+---
+- name: Create Environmental Variables on remote windows servers
+  hosts: winservergrp
+  tasks:
+   - name: Set environment variable
+     win_environment:
+       name: Path
+       value: "C:\Program Files\Veritas\NetBackup\bin"
+       level: machine
+       state: present

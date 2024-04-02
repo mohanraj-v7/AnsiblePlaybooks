@@ -1,0 +1,15 @@
+---
+- name: Run gpupdate /force command on multiple VMs 
+  hosts: winservergrp 
+
+  tasks:
+   - name: Restart Time service
+     win_service:
+       name: W32Time
+       state: restarted
+
+   - name: run gpupdate on multiple servers
+     win_command: 'gpupdate /force'
+
+   - name: save gpresult output
+     win_command: cmd.exe /c 'gpresult -r >>'C:\temp\gpresult-output.txt''

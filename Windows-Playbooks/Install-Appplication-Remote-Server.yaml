@@ -1,0 +1,16 @@
+---
+- name: Install Apache from an MSI 
+  hosts: winservergrp 
+ 
+  tasks:
+    - name: Download the Apache installer
+      ansible.windows.win_copy:
+        src: 'C:\Temp\Setup\app.msi'
+        dest: C:\Temp\
+
+    - name: Install MSI
+      ansible.windows.win_package: 
+        path: 'C:\Temp\app.msi'
+        arguments: '/q /norestart'
+        log_path: C:\Temp\app-installer-logs.log
+        state: present

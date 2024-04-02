@@ -1,0 +1,14 @@
+---
+- name: Adding registry key on remote machine
+  hosts: winservergrp
+  tasks:
+   - name: Creating a registry
+     ansible.windows.win_regedit:
+       path: HKLM:\SOFTWARE\ansible-test
+
+   - name: Modifying a registry, adding name and data
+     ansible.windows.win_regedit:
+       path: HKLM:\SOFTWARE\ansible-test
+       name: test
+       data: testdata
+       type: dword
