@@ -1,0 +1,17 @@
+---
+- name: Take backup from remote host
+  hosts: servergrp
+  become: true
+  become_method: sudo
+  vars:
+    files:
+      - /etc/default/iptables
+      - /etc/cron.d
+
+  tasks:
+    - name: Backup running on {{ansible_hostname}} server
+      synchronize:
+        src: '{{item}}'
+        dest: /home/backup-directory/{{ansible_hostname}}
+        mode: pull
+      with_items: "{{files}}"
