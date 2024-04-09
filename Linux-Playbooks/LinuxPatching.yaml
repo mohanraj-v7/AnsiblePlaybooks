@@ -1,0 +1,52 @@
+---
+- name: Linux server patching through Ansible
+  hosts: servergrp 
+  become: yes
+
+  tasks:
+   - name: Clean yum cache 
+     file:
+       path: /var/cache/yum/
+       state: absent 
+
+   - name: Check space in /var [Abort the playbook if there is no sufficient space]
+     shell: df -h /var
+     register: space
+     
+   - debug: var=space
+     tags: space
+
+   - name: Pause for 2 minutes
+     pause:
+      minutes: 2
+
+   - name: Patch the servers
+     shell: yum -y update
+    
+   - name: Clean yum cache 
+     file:
+       path: /var/cache/yum/
+       state: absent
+
+   - name: Reboot servers
+     shell: sleep 2 && /sbin/shutdown -r now 
+     async: 1
+     poll: 0
+     tags: boot
+
+   - name: Wait for 3 minutes for server to come up after rebooting
+     pause:
+      minutes: 3
+
+   - name: Confirm if server is responding to ssh
+     wait_for:
+       host: "{{ inventory_hostname }}"
+       port: 22
+       delay: 15
+       timeout: 300
+       state: started
+
+   - name: Clean yum cache
+     file:
+       path: /var/cache/yum/
+       state: absent
